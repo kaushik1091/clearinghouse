@@ -53,7 +53,14 @@ coverage.xml
 docs/_build/
 
 # State Keys
-node_state_transitions/
+node_state_transitions/*
 
 #DB Migrations
 website/control/gitignore/*
+
+#config files
+backend/config.py
+keydb/config.py
+
+# django settings
+settings.py
