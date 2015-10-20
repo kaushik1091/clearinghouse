@@ -660,32 +660,20 @@ def expreg(request):
         # To collect valid Sensor forms and corresponding sensor ids
         for esf in expsensorforms:
             if esf.has_changed():
-                # print("%%%%%%%%%%%%%%")
-                # print(esf.changed_data)
-
                 if esf.is_valid():
                     valid_esforms.append(esf)
                     # To get a list of unique sensors
                     if esf.cleaned_data['sensor'] not in selected_sensors:
                         selected_sensors.append(esf.cleaned_data['sensor'].id)
-                print(esf.cleaned_data)
-                print(esf.errors.as_data())
-                print("%%%%%%%%%%%%%%")
-
 
         # To collect VALID SensorAttribute forms and corresponding sensor_ids
         for esaf in expsaforms:
             # If user selected/changed data in this ExperimentSensorAttributeForm
             if esaf.has_changed():
-                # print('********************')
-                # print(esaf.changed_data)
                 # If the ExperimentSensorAttributeForm is valid
                 if esaf.is_valid():
                     sa = SensorAttribute.objects.select_related('sensor').get(pk=esaf.cleaned_data['sensor_attribute'].id)
                     valid_esaforms.append(esaf)
-                    print("^^^^^^^^^^^^^^^^^^")
-                    print(esaf.cleaned_data)
-                    print("^^^^^^^^^^^^^^^^^^")
                     if sa.sensor.id in selected_sensors:
                         # valid_esaforms.append(esaf)
                         if sa.sensor.id not in sa_sensors:
@@ -694,11 +682,6 @@ def expreg(request):
         # If all the forms are valid.. Just double checking..
         if expform.is_valid() and all([esf.is_valid() for esf in valid_esforms]) and all([esaf.is_valid() for esaf in valid_esaforms]):
             # If all the sensors from valid ExperimentSensorForms = All the sensors from valid ExperimentSensorAttributeForms, then save all the VALID forms
-            print("&&&&&&&&&&&&&&&&&&&&&&&&")
-            print(valid_esforms)
-            print(valid_esaforms)
-            print("&&&&&&&&&&&&&&&&&&&&&&&&")
-
             if set(selected_sensors) == set(sa_sensors):
                 new_exp = expform.save(commit=False)
                 user_inst = GeniUser.objects.get(user_ptr_id=user.pk)

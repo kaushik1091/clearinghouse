@@ -143,9 +143,6 @@ class ExperimentSensorForm(forms.ModelForm):
                         data['frequency'] =  frequency*60
 
             if data.get('frequency') or data.get('frequency_other'):
-                # print("##############")
-                # print(data)
-                # print("##############")
                 return data
             else:
                 raise ValidationError('Please fill in either of the fields under '+Sensor.objects.filter(id=data.get('sensor')).name)
@@ -171,9 +168,6 @@ class ExperimentSensorAttributeForm(forms.ModelForm):
         data = super(ExperimentSensorAttributeForm, self).clean()
         # Validate and process precision data for a selected sensor_attribute
         # Check if the precision Attribute is applicable for the given Sensor Attribute
-        # print('@@@@@@@@@@@@@@@')
-        # print(data)
-
         if data.get('sa_select'):
             if data.get('sensor_attribute'):
                 # data['sensor_attribute'] = data.get('sensor_attribute').id
