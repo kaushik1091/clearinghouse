@@ -115,10 +115,10 @@ class ExperimentSensorForm(forms.ModelForm):
     F_CHOICES = (('hour', 'Hour'),('min', 'Min'),('sec', 'Sec'),)
     frequency_unit = forms.ChoiceField(widget = forms.Select(attrs={'class': 'form-control'}),
                      choices = F_CHOICES, initial='hour', required = True,)
-    frequency_other = forms.CharField(label="Other:",
+    frequency_other = forms.CharField(label="Other:", required=False,
                                         widget=forms.TextInput(attrs={'class': 'form-control',
                                                 'placeholder': 'Please provide any additional information that you would like'}))
-    precision_other = forms.CharField(label="A level of data precision that we currently do not support? Please elaborate:",
+    precision_other = forms.CharField(label="A level of data precision that we currently do not support? Please elaborate:", required=False,
                                         widget=forms.Textarea(attrs={'class': 'form-control', 'rows':1,
                                                 'placeholder': 'Please provide any additional information that you would like'}))
     D_CHOICES = ((1, 'Yes',), (0, 'No',))
@@ -143,6 +143,9 @@ class ExperimentSensorForm(forms.ModelForm):
                         data['frequency'] =  frequency*60
 
             if data.get('frequency') or data.get('frequency_other'):
+                # print("##############")
+                # print(data)
+                # print("##############")
                 return data
             else:
                 raise ValidationError('Please fill in either of the fields under '+Sensor.objects.filter(id=data.get('sensor')).name)
@@ -168,21 +171,22 @@ class ExperimentSensorAttributeForm(forms.ModelForm):
         data = super(ExperimentSensorAttributeForm, self).clean()
         # Validate and process precision data for a selected sensor_attribute
         # Check if the precision Attribute is applicable for the given Sensor Attribute
-        print('@@@@@@@@@@@@@@@')
-        print(data)
+        # print('@@@@@@@@@@@@@@@')
+        # print(data)
 
         if data.get('sa_select'):
             if data.get('sensor_attribute'):
                 # data['sensor_attribute'] = data.get('sensor_attribute').id
-                if data.get('precision'):
-                    precision = data.get('precision')
-                elif data.get('precision_choice_loc'):
+
+                if data.get('precision_choice_loc'):
                     precision = data.get('precision_choice_loc')
+                elif data.get('precision'):
+                    precision = data.get('precision')
 
                 if data['precision_choice'] == 'full':
                     data['precision'] = 0
                 elif data['precision_choice'] == 'truncate':
-                    if data['precision']:
+                    if precision:
                         data['precision'] = precision
                     else:
                         raise ValidationError('Please fill in truncation level under '+SensorAttribute.objects.filter(id=data['sensor_attribute']).name)
